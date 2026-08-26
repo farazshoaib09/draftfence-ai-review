@@ -120,6 +120,7 @@ No. DraftFence AI Review logs its own AI-related operations. For full-site activ
 == Changelog ==
 
 = 0.3.3 =
+* Added WordPress.org marketplace banner and icon assets.
 * Simplified the Connect & Test screen around endpoint details, diagnostics, client manuals, test prompts, and safe ability exposure.
 * Removed local-machine path guessing from the connection UI.
 * Enforced explicit AI identity profiles for DraftFence AI Review AI access.
