@@ -27,4 +27,4 @@ jobs:
           SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
           SLUG: draftfence-ai-review
           ASSETS_DIR: .wordpress-org
-
+          IGNORE_OTHER_FILES: true
