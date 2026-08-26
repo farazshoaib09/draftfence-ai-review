@@ -18,9 +18,24 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Build production plugin package
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p build/draftfence-ai-review
+          tar \
+            --exclude='./.git' \
+            --exclude='./.github' \
+            --exclude='./.wordpress-org' \
+            --exclude='./.gitignore' \
+            --exclude='./.gitattributes' \
+            --exclude='./.distignore' \
+            --exclude='./README.md' \
+            --exclude='./build' \
+            -cf - . | tar -xf - -C build/draftfence-ai-review
+
       - name: Run Plugin Check
         uses: wordpress/plugin-check-action@v1
         with:
-          build-dir: './'
+          build-dir: './build/draftfence-ai-review'
           slug: draftfence-ai-review
-

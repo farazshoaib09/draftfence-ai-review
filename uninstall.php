@@ -15,41 +15,41 @@ delete_option( 'draftfence_ai_review_settings' );
 delete_option( 'draftfence_ai_review_db_version' );
 wp_clear_scheduled_hook( 'draftfence_ai_review_daily_maintenance' );
 
-$roles = wp_roles();
+$draftfence_ai_review_roles = wp_roles();
 
-if ( $roles ) {
-	foreach ( array_keys( $roles->roles ) as $role_name ) {
-		$role = get_role( $role_name );
+if ( $draftfence_ai_review_roles ) {
+	foreach ( array_keys( $draftfence_ai_review_roles->roles ) as $draftfence_ai_review_role_name ) {
+		$draftfence_ai_review_role = get_role( $draftfence_ai_review_role_name );
 
-		if ( ! $role ) {
+		if ( ! $draftfence_ai_review_role ) {
 			continue;
 		}
 
-		foreach ( array( 'draftfence_ai_review_use_ai', 'draftfence_ai_review_review_proposals', 'draftfence_ai_review_manage_settings', 'draftfence_ai_review_view_logs' ) as $capability ) {
-			$role->remove_cap( $capability );
+		foreach ( array( 'draftfence_ai_review_use_ai', 'draftfence_ai_review_review_proposals', 'draftfence_ai_review_manage_settings', 'draftfence_ai_review_view_logs' ) as $draftfence_ai_review_capability ) {
+			$draftfence_ai_review_role->remove_cap( $draftfence_ai_review_capability );
 		}
 	}
 }
 
-$user_ids = get_users(
+$draftfence_ai_review_user_ids = get_users(
 	array(
 		'fields'     => 'ids',
 		'capability' => 'draftfence_ai_review_use_ai',
 	)
 );
 
-foreach ( $user_ids as $user_id ) {
-	$user = get_user_by( 'id', absint( $user_id ) );
+foreach ( $draftfence_ai_review_user_ids as $draftfence_ai_review_user_id ) {
+	$draftfence_ai_review_user = get_user_by( 'id', absint( $draftfence_ai_review_user_id ) );
 
-	if ( $user ) {
-		$user->remove_cap( 'draftfence_ai_review_use_ai' );
+	if ( $draftfence_ai_review_user ) {
+		$draftfence_ai_review_user->remove_cap( 'draftfence_ai_review_use_ai' );
 	}
 }
 
-$logs_table     = esc_sql( $wpdb->prefix . 'draftfence_ai_review_logs' );
-$requests_table = esc_sql( $wpdb->prefix . 'draftfence_ai_review_requests' );
+$draftfence_ai_review_logs_table     = esc_sql( $wpdb->prefix . 'draftfence_ai_review_logs' );
+$draftfence_ai_review_requests_table = esc_sql( $wpdb->prefix . 'draftfence_ai_review_requests' );
 
 // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.DirectDatabaseQuery.SchemaChange, WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Uninstall cleanup removes DraftFence AI Review's own escaped custom table.
-$wpdb->query( "DROP TABLE IF EXISTS {$logs_table}" );
+$wpdb->query( "DROP TABLE IF EXISTS {$draftfence_ai_review_logs_table}" );
 // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.DirectDatabaseQuery.SchemaChange, WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Uninstall cleanup removes DraftFence AI Review's own escaped custom table.
-$wpdb->query( "DROP TABLE IF EXISTS {$requests_table}" );
+$wpdb->query( "DROP TABLE IF EXISTS {$draftfence_ai_review_requests_table}" );
