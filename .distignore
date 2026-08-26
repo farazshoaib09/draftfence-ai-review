@@ -1,0 +1,12 @@
+.git
+.github
+.gitignore
+.distignore
+.gitattributes
+README.md
+
+*.zip
+*.log
+node_modules
+vendor
+

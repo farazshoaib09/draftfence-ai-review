@@ -1,0 +1,30 @@
+name: Deploy WordPress.org assets/readme
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - readme.txt
+      - '.wordpress-org/**'
+
+permissions:
+  contents: read
+
+jobs:
+  deploy-assets-readme:
+    name: Deploy readme and marketplace assets to WordPress.org SVN
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Deploy assets/readme to WordPress.org
+        uses: 10up/action-wordpress-plugin-asset-update@stable
+        env:
+          SVN_USERNAME: ${{ secrets.SVN_USERNAME }}
+          SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
+          SLUG: draftfence-ai-review
+          ASSETS_DIR: .wordpress-org
+
