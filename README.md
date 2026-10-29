@@ -33,7 +33,7 @@ Required GitHub repository secrets:
 To deploy a release after WordPress.org allocates the slug:
 
 ```bash
-git tag v0.3.3
-git push origin v0.3.3
+git tag 0.4.0
+git push origin 0.4.0
 ```
 

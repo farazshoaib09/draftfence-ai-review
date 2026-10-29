@@ -4,7 +4,7 @@ Tags: ai, mcp, abilities, seo, permissions
 Requires at least: 6.9
 Tested up to: 7.1
 Requires PHP: 8.0
-Stable tag: 0.3.3
+Stable tag: 0.4.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -20,6 +20,8 @@ DraftFence AI Review is designed for site owners, agencies, SEO teams, and edito
 
 * Emergency switch to disable DraftFence AI Review AI operations immediately.
 * First-run onboarding wizard for guided setup.
+* Protected MCP setup audit that shows abilities marked public to the default MCP Adapter, flags other exposed tools, and links to exposure settings.
+* AI identity warning when a configured AI account can publish or edit others' posts through its WordPress role.
 * Draft-only content creation for posts, pages, and selected REST-enabled public post types.
 * Human approval workflow for edits to existing content.
 * Before/after proposal review for titles, excerpts, and SEO fields.
@@ -96,6 +98,10 @@ Yes. DraftFence AI Review stores the original content and SEO values with each p
 
 No. DraftFence AI Review does not call an external AI provider. It controls what authenticated AI clients are allowed to do inside WordPress.
 
+= Does DraftFence AI Review control other MCP tools or direct WordPress REST calls? =
+
+No. DraftFence AI Review governs its own routes and abilities. The Connect & Test audit helps identify other abilities exposed by the default WordPress MCP Adapter, but does not inspect custom MCP servers, client-side tools, or direct REST access. Use a dedicated non-administrator account and restrict abilities in your MCP exposure plugin.
+
 = Which SEO plugins are supported? =
 
 DraftFence AI Review writes SEO title and description values to common Yoast SEO, Rank Math, and AIOSEO meta keys.
@@ -118,6 +124,12 @@ No. DraftFence AI Review logs its own AI-related operations. For full-site activ
 6. Onboarding wizard for first-run setup.
 
 == Changelog ==
+
+= 0.4.0 =
+* Added a protected MCP setup audit based on abilities actually marked public to the default MCP Adapter, rather than all registered abilities.
+* Listed other public MCP abilities and flagged write-like names for manual review, with a link to the exposure settings.
+* Added a broad WordPress write-privilege warning for configured AI identities and a step-by-step verification checklist.
+* Clarified the limits of DraftFence protection across other MCP servers and direct WordPress REST access.
 
 = 0.3.3 =
 * Added WordPress.org marketplace banner and icon assets.

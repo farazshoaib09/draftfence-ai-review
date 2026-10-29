@@ -2,7 +2,7 @@
 /**
  * Plugin Name: DraftFence AI Review
  * Description: Govern AI agent access to WordPress with safe draft creation, approval workflows, scoped SEO changes, rate limits, and audit logs.
- * Version: 0.3.3
+ * Version: 0.4.0
  * Author: Faraz Shoaib
  * Text Domain: draftfence-ai-review
  * Requires at least: 6.9
@@ -15,7 +15,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'DRAFTFENCE_AI_REVIEW_VERSION', '0.3.3' );
+define( 'DRAFTFENCE_AI_REVIEW_VERSION', '0.4.0' );
 define( 'DRAFTFENCE_AI_REVIEW_FILE', __FILE__ );
 define( 'DRAFTFENCE_AI_REVIEW_DIR', plugin_dir_path( __FILE__ ) );
 define( 'DRAFTFENCE_AI_REVIEW_URL', plugin_dir_url( __FILE__ ) );

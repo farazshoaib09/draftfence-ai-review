@@ -844,6 +844,37 @@
 	padding: 14px 16px;
 }
 
+.draftfence-ai-review-exposure-details {
+	background: #fff;
+	border: 1px solid #fecaca;
+	border-radius: 12px;
+	margin: 14px 0;
+	padding: 12px 16px;
+}
+
+.draftfence-ai-review-exposure-details summary {
+	color: #7f1d1d;
+	cursor: pointer;
+	font-weight: 700;
+}
+
+.draftfence-ai-review-exposure-list {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px;
+	margin-top: 14px;
+}
+
+.draftfence-ai-review-exposure-list code {
+	max-width: 100%;
+	overflow-wrap: anywhere;
+	padding: 5px 8px;
+}
+
+.draftfence-ai-review-manual-note ol {
+	margin: 10px 0 14px 20px;
+}
+
 .draftfence-ai-review-diagnostics-table td,
 .draftfence-ai-review-diagnostics-table th {
 	vertical-align: top;

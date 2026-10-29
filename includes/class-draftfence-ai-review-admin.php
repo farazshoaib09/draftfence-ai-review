@@ -323,7 +323,7 @@ class DraftFence_AI_Review_Admin {
 		$sample_user    = wp_get_current_user();
 		$sample_login   = $sample_user && $sample_user->exists() ? $sample_user->user_login : 'admin';
 		$draftfence_ai_review_abilities = self::get_draftfence_ai_review_ability_names();
-		$ability_names  = self::get_registered_ability_names();
+		$ability_names  = self::get_exposed_ability_names();
 		$non_draftfence_ai_review_abilities = array_values(
 			array_filter(
 				$ability_names,
@@ -334,9 +334,9 @@ class DraftFence_AI_Review_Admin {
 		);
 		$high_risk_abilities = array_values(
 			array_filter(
-				$ability_names,
+				$non_draftfence_ai_review_abilities,
 				static function ( $ability_name ) {
-					return (bool) preg_match( '/(delete|search-replace|update-order|product-delete|code-snippet|upload|create-post|update-post|update-product)/i', $ability_name );
+					return (bool) preg_match( '/(create|update|delete|remove|publish|upload|moderate|replace|assign|approve|install|activate|edit|write|set-|add-)/i', $ability_name );
 				}
 			)
 		);
@@ -561,13 +561,13 @@ class DraftFence_AI_Review_Admin {
 			<div class="draftfence-ai-review-panel">
 				<div class="draftfence-ai-review-panel-header">
 					<h2><?php esc_html_e( 'Safe ability exposure', 'draftfence-ai-review' ); ?></h2>
-					<p><?php esc_html_e( 'When possible, expose only DraftFence AI Review abilities to your AI client. This keeps content creation, SEO proposals, approvals, and rollback inside DraftFence AI Review.', 'draftfence-ai-review' ); ?></p>
+					<p><?php esc_html_e( 'This audit lists abilities marked public for the default WordPress MCP Adapter. It does not inspect a remote client, custom MCP servers, or direct REST access.', 'draftfence-ai-review' ); ?></p>
 				</div>
 				<div class="draftfence-ai-review-safe-grid">
 					<div class="draftfence-ai-review-safe-card">
-						<span><?php esc_html_e( 'Registered abilities', 'draftfence-ai-review' ); ?></span>
-						<strong><?php echo esc_html( count( $ability_names ) ? count( $ability_names ) : __( 'Unknown', 'draftfence-ai-review' ) ); ?></strong>
-						<p><?php esc_html_e( 'Total abilities visible to WordPress.', 'draftfence-ai-review' ); ?></p>
+						<span><?php esc_html_e( 'Public MCP tools', 'draftfence-ai-review' ); ?></span>
+						<strong><?php echo esc_html( count( $ability_names ) ); ?></strong>
+						<p><?php esc_html_e( 'Tool-type abilities marked public for the default MCP Adapter.', 'draftfence-ai-review' ); ?></p>
 					</div>
 					<div class="draftfence-ai-review-safe-card">
 						<span><?php esc_html_e( 'DraftFence AI Review abilities', 'draftfence-ai-review' ); ?></span>
@@ -575,17 +575,36 @@ class DraftFence_AI_Review_Admin {
 						<p><?php esc_html_e( 'Abilities this plugin governs directly.', 'draftfence-ai-review' ); ?></p>
 					</div>
 					<div class="draftfence-ai-review-safe-card <?php echo ! empty( $high_risk_abilities ) ? 'is-risky' : ''; ?>">
-						<span><?php esc_html_e( 'High-risk indicators', 'draftfence-ai-review' ); ?></span>
+						<span><?php esc_html_e( 'Other write-like abilities', 'draftfence-ai-review' ); ?></span>
 						<strong><?php echo esc_html( count( $high_risk_abilities ) ); ?></strong>
-						<p><?php esc_html_e( 'Direct delete/update/search-replace style abilities deserve extra caution.', 'draftfence-ai-review' ); ?></p>
+						<p><?php esc_html_e( 'Name-based warning only; review every non-DraftFence tool.', 'draftfence-ai-review' ); ?></p>
 					</div>
 				</div>
-				<?php if ( ! empty( $high_risk_abilities ) ) : ?>
+				<?php if ( ! empty( $non_draftfence_ai_review_abilities ) ) : ?>
 					<div class="draftfence-ai-review-danger-panel">
 						<strong><?php esc_html_e( 'Do not bypass DraftFence AI Review:', 'draftfence-ai-review' ); ?></strong>
-						<?php esc_html_e( 'Your site appears to expose non-DraftFence AI Review abilities. Use your MCP exposure plugin/connector settings to prefer DraftFence AI Review abilities for safer workflows.', 'draftfence-ai-review' ); ?>
+						<?php esc_html_e( 'Other abilities are public to the default MCP Adapter. Prompts telling an agent to prefer DraftFence are not a security boundary. Disable unneeded abilities in your exposure plugin and verify the resulting tool list in your MCP client.', 'draftfence-ai-review' ); ?>
 					</div>
+					<details class="draftfence-ai-review-exposure-details">
+						<summary><?php echo esc_html( sprintf( /* translators: %d: number of other public MCP abilities. */ _n( 'Review %d other public ability', 'Review %d other public abilities', count( $non_draftfence_ai_review_abilities ), 'draftfence-ai-review' ), count( $non_draftfence_ai_review_abilities ) ) ); ?></summary>
+						<div class="draftfence-ai-review-exposure-list">
+							<?php foreach ( $non_draftfence_ai_review_abilities as $ability_name ) : ?>
+								<code><?php echo esc_html( $ability_name ); ?></code>
+							<?php endforeach; ?>
+						</div>
+					</details>
 				<?php endif; ?>
+				<div class="draftfence-ai-review-manual-note">
+					<strong><?php esc_html_e( 'Protected setup checklist:', 'draftfence-ai-review' ); ?></strong>
+					<ol>
+						<li><?php esc_html_e( 'Use a dedicated WordPress account for the AI client, never an administrator account.', 'draftfence-ai-review' ); ?></li>
+						<li><?php esc_html_e( 'Expose only the DraftFence actions the client needs; disable other write-capable MCP abilities.', 'draftfence-ai-review' ); ?></li>
+						<li><?php esc_html_e( 'Reconnect the client and inspect its discovered abilities. Confirm no direct post, SEO, or site-management writes remain.', 'draftfence-ai-review' ); ?></li>
+						<li><?php esc_html_e( 'Test status, draft creation, and a pending proposal using that dedicated account.', 'draftfence-ai-review' ); ?></li>
+					</ol>
+					<a class="button button-primary" href="<?php echo esc_url( admin_url( function_exists( 'ewpa_is_ability_enabled' ) ? 'options-general.php?page=ewpa-settings' : 'plugins.php?s=mcp&plugin_status=all' ) ); ?>"><?php esc_html_e( 'Open Ability Exposure Settings', 'draftfence-ai-review' ); ?></a>
+				</div>
+				<p><?php esc_html_e( 'These are DraftFence abilities, not all actions for one AI account. Approval and rollback require a separate human reviewer.', 'draftfence-ai-review' ); ?></p>
 				<div class="draftfence-ai-review-code-shell"><pre><code id="draftfence-ai-review-safe-allowlist"><?php echo esc_html( implode( "\n", $draftfence_ai_review_abilities ) ); ?></code></pre></div>
 				<button type="button" class="button draftfence-ai-review-copy-button" data-copy-target="draftfence-ai-review-safe-allowlist"><?php esc_html_e( 'Copy Safe Ability List', 'draftfence-ai-review' ); ?></button>
 			</div>
@@ -1104,7 +1123,7 @@ class DraftFence_AI_Review_Admin {
 		);
 	}
 
-	private static function get_registered_ability_names() {
+	private static function get_exposed_ability_names() {
 		if ( ! function_exists( 'wp_get_abilities' ) ) {
 			return array();
 		}
@@ -1116,20 +1135,17 @@ class DraftFence_AI_Review_Admin {
 			return array();
 		}
 
-		foreach ( $abilities as $key => $ability ) {
-			if ( is_string( $key ) ) {
-				$names[] = $key;
+		foreach ( $abilities as $ability ) {
+			if ( ! is_object( $ability ) || ! method_exists( $ability, 'get_name' ) || ! method_exists( $ability, 'get_meta' ) ) {
 				continue;
 			}
 
-			if ( is_object( $ability ) && method_exists( $ability, 'get_name' ) ) {
-				$names[] = $ability->get_name();
+			$meta = $ability->get_meta();
+			if ( ! is_array( $meta ) || empty( $meta['mcp']['public'] ) || ( isset( $meta['mcp']['type'] ) && 'tool' !== $meta['mcp']['type'] ) ) {
 				continue;
 			}
 
-			if ( is_array( $ability ) && ! empty( $ability['name'] ) ) {
-				$names[] = $ability['name'];
-			}
+			$names[] = $ability->get_name();
 		}
 
 		$names = array_values( array_unique( array_filter( array_map( 'strval', $names ) ) ) );
@@ -1158,7 +1174,7 @@ class DraftFence_AI_Review_Admin {
 			'- Setup note: Use the official MCP client manual or an existing connector/extension for transport-specific setup.',
 			'',
 			'Abilities',
-			'- Registered abilities count: ' . $context['ability_count'],
+			'- Public MCP tools count: ' . $context['ability_count'],
 			'- DraftFence AI Review abilities found: ' . $context['draftfence_ai_review_ability_count'],
 			'- Non-DraftFence AI Review abilities count: ' . $context['non_draftfence_ai_review_count'],
 			'- High-risk ability indicators: ' . $context['high_risk_ability_count'],
@@ -1198,11 +1214,39 @@ class DraftFence_AI_Review_Admin {
 		}
 
 		$ai_profiles = ! empty( $settings['agent_profiles'] );
+		$privileged_ai_profiles = array();
+		foreach ( $settings['agent_profiles'] as $user_id => $profile ) {
+			if ( empty( $profile['enabled'] ) ) {
+				continue;
+			}
+			$user = get_user_by( 'id', absint( $user_id ) );
+			if ( $user && ( user_can( $user, 'manage_options' ) || user_can( $user, 'publish_posts' ) || user_can( $user, 'edit_others_posts' ) || user_can( $user, 'delete_others_posts' ) ) ) {
+				$privileged_ai_profiles[] = $user->user_login;
+			}
+		}
+		$public_abilities = self::get_exposed_ability_names();
+		$other_public_abilities = array_values( array_filter( $public_abilities, static function ( $ability_name ) {
+			return 0 !== strpos( $ability_name, 'draftfence-ai-review/' ) && 0 !== strpos( $ability_name, 'mcp-adapter/' );
+		} ) );
 		$pretty_permalinks = (bool) get_option( 'permalink_structure' );
 		$env_type = function_exists( 'wp_get_environment_type' ) ? wp_get_environment_type() : 'production';
 		$app_passwords_available = wp_is_application_passwords_available();
 
 		return array(
+			array(
+				'label' => __( 'AI identities avoid broad WordPress write privileges', 'draftfence-ai-review' ),
+				'pass'  => empty( $privileged_ai_profiles ) && $ai_profiles,
+				'help'  => ! $ai_profiles ? __( 'Configure a dedicated AI identity before connecting an AI client.', 'draftfence-ai-review' ) : ( empty( $privileged_ai_profiles ) ? __( 'No configured AI identity can publish or edit others\' posts through its WordPress role. Direct REST access to content the user can edit still remains possible.', 'draftfence-ai-review' ) : sprintf( /* translators: %s: comma-separated usernames. */ __( 'These AI identities can publish or edit others\' posts through WordPress: %s. Use dedicated accounts with narrower roles.', 'draftfence-ai-review' ), implode( ', ', $privileged_ai_profiles ) ) ),
+				'url'   => admin_url( 'admin.php?page=draftfence-ai-review-identities' ),
+				'action_label' => __( 'Review Identities', 'draftfence-ai-review' ),
+			),
+			array(
+				'label' => __( 'Default MCP exposure limited to DraftFence', 'draftfence-ai-review' ),
+				'pass'  => empty( $other_public_abilities ) && ! empty( $public_abilities ),
+				'help'  => __( 'Other public MCP abilities may bypass DraftFence approval. Review them individually. This check cannot inspect custom MCP servers or direct REST access.', 'draftfence-ai-review' ),
+				'url'   => admin_url( function_exists( 'ewpa_is_ability_enabled' ) ? 'options-general.php?page=ewpa-settings' : 'plugins.php?s=mcp&plugin_status=all' ),
+				'action_label' => __( 'Review Exposure', 'draftfence-ai-review' ),
+			),
 			array(
 				'label' => __( 'DraftFence AI Review protection enabled', 'draftfence-ai-review' ),
 				'pass'  => ! empty( $settings['enabled'] ),
